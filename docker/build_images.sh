@@ -15,4 +15,6 @@ cp -r $work_space/bin $work_space/docker/bin
 tag=swr.cn-east-3.myhuaweicloud.com/badminton/feishu_doc_blocks_plugin_server:$version
 docker build --platform linux/amd64 -t $tag -f Dockerfile .
 
+sed -i '' -E "s#feishu_doc_blocks_plugin_server:[^ ]+#feishu_doc_blocks_plugin_server:${version}#g" ../docker-compose.yaml
+
 rm -rf $work_space/docker/bin

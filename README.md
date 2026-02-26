@@ -12,3 +12,7 @@ PORT=8081 # 服务端口
 ### 运行
 - go mod tidy
 - go run main.go
+
+### 镜像
+- 构建`make build_img version=0.0.1`
+- 运行`docker compose up -d`

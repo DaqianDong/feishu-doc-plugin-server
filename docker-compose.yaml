@@ -1,5 +1,5 @@
 services:
-  feishu-server:
+  feishu_doc_blocks_plugin_server:
     image: swr.cn-east-3.myhuaweicloud.com/badminton/feishu_doc_blocks_plugin_server:0.0.1
     restart: on-failure
     environment:

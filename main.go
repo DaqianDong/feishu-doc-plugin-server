@@ -18,6 +18,12 @@ func main() {
 	larkclient.Init(os.Getenv("APP_ID"), os.Getenv("APP_SECRET"))
 	ocr.Init(os.Getenv("OCR_KEY"))
 
+	// 端口
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8081"
+	}
+
 	r := gin.Default()
 	r.Use(Cors())
 
@@ -30,8 +36,8 @@ func main() {
 	r.GET("/callback", controller.OauthCallbackController)
 	r.GET("/whiteboard", controller.Wrap(controller.WhiteboardController))
 
-	fmt.Println("Server running on http://localhost:8081")
-	log.Fatal(r.Run(":8081"))
+	fmt.Println("Server running on http://localhost:" + port)
+	log.Fatal(r.Run(":" + port))
 }
 
 func Cors() gin.HandlerFunc {

@@ -1,0 +1,10 @@
+services:
+  feishu-server:
+    image: swr.cn-east-3.myhuaweicloud.com/badminton/feishu_doc_blocks_plugin_server:0.0.1
+    restart: on-failure
+    environment:
+      - PORT=8081
+    ports:
+      - "8081:8081"
+    env_file:
+      - .env

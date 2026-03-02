@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"oauth-test/infra/image"
 	"os"
 	"time"
 
@@ -124,7 +125,13 @@ func WhiteboardImg(documentId, recordId string) (data []byte, err error) {
 	}
 
 	data, err = io.ReadAll(rsp2.File)
-	os.WriteFile("a.png", data, 0777)
+	if err != nil {
+		return
+	}
+	data, err = image.CropAndBase64(data)
+	if err == nil {
+		os.WriteFile("a.png", data, 0777)
+	}
 
 	return
 }

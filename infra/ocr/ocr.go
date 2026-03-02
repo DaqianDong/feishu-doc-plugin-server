@@ -8,10 +8,10 @@ import (
 	"net/http"
 )
 
-const url = "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
-
 type ocrclient struct {
 	apiKey string
+	model  string
+	url    string
 }
 
 // Content 结构体用于处理多模态内容（文本或图片URL）
@@ -31,8 +31,12 @@ type Message struct {
 }
 
 type ChatRequest struct {
-	Model    string    `json:"model"`
-	Messages []Message `json:"messages"`
+	Model           string    `json:"model"`
+	ReasoningFormat string    `json:"reasoning_format"`
+	Messages        []Message `json:"messages"`
+	Temperature     float32   `json:"temperature"`
+	TopK            float32   `json:"top_k"`
+	TopP            float32   `json:"top_p"`
 }
 
 // 响应结构体（简化版）
@@ -49,37 +53,41 @@ type ChatResponse struct {
 
 var client *ocrclient
 
-func Init(apiKey string) {
-	client = &ocrclient{apiKey: apiKey}
+func Init(url, model, apiKey string) {
+	client = &ocrclient{url: url, model: model, apiKey: apiKey}
 }
 
 func OCR(imgUrl, prompt string) (res string, err error) {
 	// 1. 构造请求数据
 	reqBody := ChatRequest{
-		Model: "qwen-vl-ocr-2025-11-20",
+		Model: client.model,
 		Messages: []Message{
 			{
 				Role: "user",
 				Content: []Content{
+					{
+						Type: "text",
+						Text: prompt,
+					},
 					{
 						Type: "image_url",
 						ImageURL: &ImageURL{
 							URL: imgUrl,
 						},
 					},
-					{
-						Type: "text",
-						Text: prompt,
-					},
 				},
 			},
 		},
+		Temperature:     0,
+		TopK:            1,
+		TopP:            1,
+		ReasoningFormat: "none",
 	}
 
 	jsonData, _ := json.Marshal(reqBody)
 
 	// 2. 创建 HTTP Request
-	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
+	req, _ := http.NewRequest("POST", client.url, bytes.NewBuffer(jsonData))
 	req.Header.Set("Authorization", "Bearer "+client.apiKey)
 	req.Header.Set("Content-Type", "application/json")
 

@@ -16,7 +16,7 @@ import (
 
 func main() {
 	larkclient.Init(os.Getenv("APP_ID"), os.Getenv("APP_SECRET"))
-	ocr.Init(os.Getenv("OCR_KEY"))
+	ocr.Init(os.Getenv("OCR_URL"), os.Getenv("OCR_MODEL"), os.Getenv("OCR_KEY"))
 
 	// 端口
 	port := os.Getenv("PORT")

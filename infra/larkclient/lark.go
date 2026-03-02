@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"oauth-test/infra/image"
 	"os"
 	"time"
@@ -91,6 +92,7 @@ func Stop() {
 
 // WhiteboardImg 下载白板图片
 func WhiteboardImg(documentId, recordId string) (data []byte, err error) {
+	start := time.Now()
 	// 创建请求对象
 	req := larkdocx.NewGetDocumentBlockReqBuilder().DocumentId(documentId).BlockId(recordId)
 	rsp, err := client.client.Docx.V1.DocumentBlock.Get(
@@ -105,7 +107,9 @@ func WhiteboardImg(documentId, recordId string) (data []byte, err error) {
 		err = fmt.Errorf("code: %d, msg: %s", rsp.CodeError.Code, rsp.CodeError.Msg)
 		return
 	}
+	log.Printf("获取画板token 耗时：%v", time.Since(start))
 
+	start = time.Now()
 	req2 := larkboard.NewDownloadAsImageWhiteboardReqBuilder().WhiteboardId(*rsp.Data.Block.Board.Token)
 	rsp2, err := client.client.Board.V1.Whiteboard.DownloadAsImage(
 		context.Background(),
@@ -128,7 +132,11 @@ func WhiteboardImg(documentId, recordId string) (data []byte, err error) {
 	if err != nil {
 		return
 	}
-	data, err = image.CropAndBase64(data)
+	log.Printf("下载画板缩略图 耗时：%v", time.Since(start))
+
+	start = time.Now()
+	data, err = image.CropCompress(data)
+	log.Printf("裁剪白边，压缩图片 耗时：%v", time.Since(start))
 	if err == nil {
 		os.WriteFile("a.png", data, 0777)
 	}

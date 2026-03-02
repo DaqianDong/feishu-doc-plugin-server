@@ -78,9 +78,9 @@ func OCR(imgUrl, prompt string) (res string, err error) {
 				},
 			},
 		},
-		Temperature:     0,
-		TopK:            1,
-		TopP:            1,
+		// Temperature:     0,
+		// TopK:            1,
+		// TopP:            1,
 		ReasoningFormat: "none",
 	}
 

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 )
 
 type ocrclient struct {
@@ -117,6 +118,27 @@ func OCR(imgUrl, prompt string) (res string, err error) {
 	// 打印 OCR 识别出的 JSON 结果
 	if len(chatResp.Choices) > 0 {
 		res = chatResp.Choices[0].Message.Content
+
+		// 清理 markdown 代码块标记
+		// 去除可能的 ```json 或 ``` 标记
+		if strings.HasPrefix(res, "```json") {
+			res = strings.TrimPrefix(res, "```json")
+			res = strings.TrimSpace(res)
+			// 去除结尾的 ```
+			if strings.HasSuffix(res, "```") {
+				res = strings.TrimSuffix(res, "```")
+				res = strings.TrimSpace(res)
+			}
+		} else if strings.HasPrefix(res, "```") {
+			res = strings.TrimPrefix(res, "```")
+			res = strings.TrimSpace(res)
+			// 去除结尾的 ```
+			if strings.HasSuffix(res, "```") {
+				res = strings.TrimSuffix(res, "```")
+				res = strings.TrimSpace(res)
+			}
+		}
+
 		fmt.Println("识别结果: " + res)
 	}
 	return

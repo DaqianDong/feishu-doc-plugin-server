@@ -31,13 +31,18 @@ type Message struct {
 	Content []Content `json:"content"`
 }
 
+type ExtraBody struct {
+	EnableThinking bool `json:"enable_thinking"`
+}
+
 type ChatRequest struct {
 	Model           string    `json:"model"`
 	ReasoningFormat string    `json:"reasoning_format"`
 	Messages        []Message `json:"messages"`
 	Temperature     float32   `json:"temperature"`
-	TopK            float32   `json:"top_k"`
-	TopP            float32   `json:"top_p"`
+	// TopK            float32   `json:"top_k"`
+	TopP           float32 `json:"top_p"`
+	EnableThinking bool    `json:"enable_thinking"`
 }
 
 // 响应结构体（简化版）
@@ -79,10 +84,12 @@ func OCR(imgUrl, prompt string) (res string, err error) {
 				},
 			},
 		},
-		// Temperature:     0,
+		Temperature: 0.8,
 		// TopK:            1,
-		// TopP:            1,
+		TopP:            0.95,
 		ReasoningFormat: "none",
+		// ExtraBody:       ExtraBody{EnableThinking: true},
+		EnableThinking: false,
 	}
 
 	jsonData, _ := json.Marshal(reqBody)

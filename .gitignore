@@ -1,3 +1,45 @@
+# 环境变量
 .env
+
+# 调试文件（图片处理结果）
 a.png
-bin
+
+# 构建产物
+bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Go 工具缓存
+go.work
+go.work.sum
+
+# 依赖目录
+vendor/
+
+# IDE 配置
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# 操作系统文件
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Air 热重载
+tmp/
+.air.toml
+
+# 日志文件
+*.log

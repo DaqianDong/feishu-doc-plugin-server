@@ -43,7 +43,11 @@ go mod tidy
 # 运行开发服务器
 go run main.go
 
-# 构建二进制文件（Linux）
+# 使用 air 实现热重载（推荐）
+air init  # 首次使用生成 .air.toml 配置
+air       # 启动热重载开发服务器
+
+# 构建 Linux 二进制文件
 make build
 
 # 构建并打包 Docker 镜像
@@ -52,6 +56,25 @@ make build_img version=0.0.1
 # 使用 Docker Compose 启动
 docker compose up -d
 ```
+
+### VSCode 调试配置
+
+项目已配置 `.vscode/launch.json`，可直接按 `F5` 启动调试：
+
+```json
+{
+  "name": "Launch Package",
+  "type": "go",
+  "request": "launch",
+  "mode": "auto",
+  "program": "${workspaceFolder}/main.go"
+}
+```
+
+**调试断点设置**：
+- 在 `main.go` 或任何 `.go` 文件中点击行号左侧设置断点
+- 按 `F5` 启动调试，程序会在断点处暂停
+- 使用调试工具栏查看变量、调用栈等
 
 ---
 
@@ -218,6 +241,34 @@ PORT=8081                      # 服务监听端口，默认 8081
     --cookie "mysession=xxx"
   ```
 
+### Docker 部署
+
+**本地构建镜像**：
+```bash
+# 构建 Linux 版二进制并打包 Docker 镜像
+make build_img version=0.0.1
+
+# 镜像标签：swr.cn-east-3.myhuaweicloud.com/badminton/feishu_doc_blocks_plugin_server:0.0.1
+```
+
+**使用 Docker Compose 部署**：
+```bash
+# 确保已配置 .env 文件
+docker compose up -d
+
+# 查看日志
+docker compose logs -f
+
+# 停止服务
+docker compose down
+```
+
+**Dockerfile 说明**：
+- 基础镜像：`alpine:3.18`
+- 时区设置：`Asia/Shanghai`
+- 二进制位置：`/data/feishu/server`
+- 镜像仓库：华为云 SWR (`swr.cn-east-3.myhuaweicloud.com`)
+
 ---
 
 ## 常见问题
@@ -248,6 +299,37 @@ A: 确保 Go 版本 >= 1.25，运行 `go mod tidy` 更新依赖
 - 🔐 生产环境需更换 Session 存储方案
 - 🐳 Docker 部署使用 `docker-compose.yaml`
 - 🔄 修改代码后无需重启（使用 `air` 可实现热重载）
+- 🐞 使用 VSCode 按 `F5` 即可启动调试
+
+### Air 热重载配置
+
+推荐使用 `air` 实现开发时自动重载：
+
+```bash
+# 安装 air
+go install github.com/cosmtrek/air@latest
+
+# 初始化配置（生成 .air.toml）
+air init
+
+# 启动热重载
+air
+```
+
+推荐的 `.air.toml` 配置：
+```toml
+root = "."
+tmp_dir = "tmp"
+[build]
+cmd = "go build -o ./tmp/main ."
+bin = "tmp/main"
+include_ext = ["go"]
+exclude_dir = ["tmp", "vendor"]
+delay = 1000
+stop_on_error = true
+[log]
+time = true
+```
 
 ---
 

@@ -120,7 +120,7 @@ func CropCompress(input []byte) ([]byte, error) {
 	cropped := CropWhitespace(img, 240)
 
 	// 2. 缩放并压缩
-	return ResizeAndCompress(cropped, 80, 0.6)
+	return ResizeAndCompress(cropped, 80, 0.8)
 }
 
 // ResizeAndCompress 缩放并转为 JPEG
